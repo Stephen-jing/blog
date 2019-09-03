@@ -7,9 +7,12 @@
         <ul>
             <li v-for="category in blog.categories" :key="category">{{category}}</li>
         </ul>
+        <button @click="deleteSingleBlog()">删除</button>
+        <router-link :to="'/edit/' + id">编辑</router-link>
     </div>
 </template>
 <script>
+import axios from 'axios';
 export default {
     name:'single-blog',
     data(){
@@ -19,15 +22,18 @@ export default {
         }
     },
     created(){
-        this.$http.get('https://vuedemo-925a4.firebaseio.com/posts1/' + this.id + ".json")
+        axios.get('/posts1/' + this.id + ".json")
             .then((data) => {
-                return data.json();
-                // console.log(data);
-                // this.blog = data.body;
+                this.blog = data.data;
             })
-            .then((data) => {
-                this.blog = data;
-            })
+    },
+    methods:{
+        deleteSingleBlog(){
+            axios.delete("/posts1/" + this.id + ".json")
+                .then(response => {
+                    this.$router.push({path:'/'})
+                })
+        }
     }
 }
 </script>

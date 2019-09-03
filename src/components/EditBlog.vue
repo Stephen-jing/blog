@@ -1,6 +1,6 @@
 <template>
-  <div id="add-blog">
-    <h2>添加博客</h2>
+  <div id="edit-blog">
+    <h2>编辑博客</h2>
     <form v-if="!submmited">
         <label>博客标题</label>
         <input type="text" v-model="blog.title" required>
@@ -22,7 +22,7 @@
                 {{author}}
             </option>
         </select>
-        <button v-on:click.prevent="post">添加博客</button>
+        <button v-on:click.prevent="post">编辑博客</button>
     </form>
     <div v-if="submmited">
         <h3>您的博客发布成功！</h3>
@@ -44,40 +44,45 @@
 </template>
 
 <script>
-import axios from 'axios';
 export default {
-  name: 'add-blog',
+  name: 'edit-blog',
   data () {
     return {
-        blog:{
-            title:"",
-            content:"",
-            categories:[],
-            author:""
-        },
+        id:this.$route.params.id,
+        blog:{},
         authors:["Jack","Stephen","Jone"],
         submmited:false
     }
   },
   methods:{
+      fetchData(){
+        //   console.log(this.id)
+        this.$http.get("https://vuedemo-925a4.firebaseio.com/posts1/" + this.id + ".json")
+            .then(response => {
+                // console.log(response)
+                this.blog = response.body;
+            })
+      },
       post(){
-        //   this.$http.post("https://vuedemo-925a4.firebaseio.com/posts1.json",this.blog)
-          axios.post("/posts1.json",this.blog)
+          this.$http.put("https://vuedemo-925a4.firebaseio.com/posts1/" + this.id + ".json",this.blog)
             .then((data) => {
-                console.log(data);
+                // console.log(data);
                 this.submmited = true
             })
       }
+  },
+  created(){
+      this.fetchData();
   }
 }
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-#add-blog *{
+#edit-blog *{
     box-sizing: border-box;
 }
-#add-blog{
+#edit-blog{
     margin: 20px auto;
     max-width: 600px;
     padding: 20px;

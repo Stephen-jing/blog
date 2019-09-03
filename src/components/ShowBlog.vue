@@ -2,7 +2,7 @@
   <div v-theme:column="'narrow'" id="show-blog">
       <h1>博客总览</h1>
       <input type="text" placeholder="搜索" v-model="search">
-      <div class="single-blog" v-for="blog in filteredBlogs">
+      <div class="single-blog" v-for="blog in filteredBlogs" :key="blog.id">
           <router-link v-bind:to="'/blog/' + blog.id">
               <h2 v-rainbow>{{blog.title | to-uppercase}}</h2>
           </router-link>
@@ -14,6 +14,7 @@
 </template>
 
 <script>
+import axios from 'axios';
 export default {
   name: 'show-blog',
   data(){
@@ -23,9 +24,10 @@ export default {
       }
   },
   created(){
-      this.$http.get("https://vuedemo-925a4.firebaseio.com/posts1.json")
+      axios.get("/posts1.json")
         .then((data) => {
-            return data.json();
+            return data.data;
+            // return data.json();
             // console.log(data.json())
             // this.blogs = data.body.slice(0,10);
         })
@@ -39,7 +41,7 @@ export default {
             }
             // console.log(blogsArray);
             this.blogs = blogsArray;
-            console.log(this.blogs);
+            // console.log(this.blogs);
         })
   },
   computed:{
